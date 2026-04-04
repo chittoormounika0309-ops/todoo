@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Taskflow — Sign In</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,700;1,400;1,700&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --ink:#080808; --paper:#f5f3ee; --cream:#ede9e0; --rule:#d8d4c8; --muted:#a09a8e; --serif:'Playfair Display',Georgia,serif; --display:'Bebas Neue',sans-serif; --sans:'Inter',sans-serif; }
+    body { font-family:var(--sans); background:var(--paper); color:var(--ink); min-height:100vh; display:flex; flex-direction:column; overflow-x:hidden; }
+
+    .ticker { background:var(--ink); color:var(--paper); overflow:hidden; white-space:nowrap; padding:10px 0; flex-shrink:0; }
+    .ticker-track { display:inline-block; animation:ticker 22s linear infinite; }
+    .ticker-track span { font-family:var(--display); font-size:12px; letter-spacing:4px; margin-right:60px; }
+    .ticker-track .dot { color:var(--muted); }
+    @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+    .layout { flex:1; display:grid; grid-template-columns:1fr 1fr; }
+
+    .left-panel { background:var(--ink); color:var(--paper); padding:60px 56px; display:flex; flex-direction:column; justify-content:space-between; position:relative; overflow:hidden; }
+    .left-panel::before { content:''; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.02) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; }
+    .left-top { position:relative; z-index:1; animation:fadeUp 0.6s 0.1s both; }
+    .left-logo { font-family:var(--display); font-size:18px; letter-spacing:4px; color:var(--paper); text-decoration:none; display:block; margin-bottom:60px; opacity:0.6; }
+    .left-tag { font-family:var(--display); font-size:11px; letter-spacing:5px; color:rgba(255,255,255,0.3); margin-bottom:20px; }
+    .left-headline { overflow:hidden; }
+    .lh { display:block; font-family:var(--display); font-size:clamp(52px,7vw,88px); line-height:0.88; letter-spacing:-1px; color:var(--paper); animation:wordReveal 0.9s cubic-bezier(0.16,1,0.3,1) both; }
+    .lh.italic { font-family:var(--serif); font-style:italic; font-weight:700; font-size:clamp(40px,5.5vw,68px); }
+    .lh:nth-child(2){animation-delay:.13s} .lh:nth-child(3){animation-delay:.26s}
+    @keyframes wordReveal { from{transform:translateY(110%);opacity:0} to{transform:translateY(0);opacity:1} }
+    .left-mid { position:relative; z-index:1; animation:fadeUp 0.6s 0.5s both; }
+    .left-desc { font-family:var(--serif); font-size:15px; font-style:italic; color:rgba(255,255,255,0.5); line-height:1.8; margin-bottom:40px; }
+    .features-list { display:flex; flex-direction:column; gap:16px; }
+    .feat-item { display:flex; align-items:center; gap:14px; }
+    .feat-dot { width:6px; height:6px; background:var(--paper); border-radius:50%; flex-shrink:0; opacity:0.4; }
+    .feat-text { font-size:12px; font-weight:300; color:rgba(255,255,255,0.55); letter-spacing:0.5px; }
+    .left-bottom { position:relative; z-index:1; animation:fadeUp 0.6s 0.6s both; }
+    .left-big-num { font-family:var(--display); font-size:96px; color:transparent; -webkit-text-stroke:1px rgba(255,255,255,0.1); line-height:1; letter-spacing:-3px; user-select:none; }
+
+    .right-panel { padding:60px 56px; display:flex; flex-direction:column; justify-content:center; }
+    .form-header { margin-bottom:40px; animation:fadeUp 0.6s 0.2s both; }
+    .form-tag { font-family:var(--display); font-size:11px; letter-spacing:5px; color:var(--muted); margin-bottom:12px; }
+    .form-title { font-family:var(--display); font-size:clamp(28px,4vw,44px); letter-spacing:-1px; line-height:1; }
+    .form-title em { font-family:var(--serif); font-style:italic; }
+    .form-sub { font-family:var(--serif); font-size:14px; font-style:italic; color:var(--muted); margin-top:10px; }
+
+    .tabs { display:flex; border-bottom:1px solid var(--rule); margin-bottom:36px; animation:fadeUp 0.6s 0.3s both; }
+    .tab-btn { font-family:var(--display); font-size:11px; letter-spacing:4px; padding:12px 24px 12px 0; border:none; background:transparent; color:var(--muted); cursor:pointer; position:relative; transition:color 0.2s; }
+    .tab-btn::after { content:''; position:absolute; bottom:-1px; left:0; width:0; height:2px; background:var(--ink); transition:width 0.3s cubic-bezier(0.4,0,0.2,1); }
+    .tab-btn.active { color:var(--ink); }
+    .tab-btn.active::after { width:calc(100% - 24px); }
+
+    .form-body { animation:fadeUp 0.6s 0.4s both; }
+    .form-panel { display:none; }
+    .form-panel.active { display:block; }
+    .field { margin-bottom:24px; }
+    .field-label { font-family:var(--display); font-size:10px; letter-spacing:4px; color:var(--muted); margin-bottom:10px; display:block; }
+    .field-input { width:100%; border:none; border-bottom:1.5px solid var(--rule); background:transparent; color:var(--ink); font-family:var(--serif); font-size:17px; font-style:italic; padding:12px 0; outline:none; transition:border-color 0.2s; }
+    .field-input:focus { border-color:var(--ink); }
+    .field-input::placeholder { color:var(--rule); }
+    .field-error { font-size:10px; color:#c0392b; letter-spacing:1px; margin-top:6px; display:none; font-weight:500; text-transform:uppercase; }
+    .field-error.show { display:block; }
+    .form-submit { width:100%; font-family:var(--display); font-size:13px; letter-spacing:5px; background:var(--ink); color:var(--paper); border:none; padding:18px; cursor:pointer; margin-top:8px; position:relative; overflow:hidden; transition:opacity 0.2s, transform 0.15s; }
+    .form-submit:hover { opacity:0.8; transform:translateY(-1px); }
+    .form-submit:active { transform:scale(0.98); }
+    .form-submit:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+    .ripple { position:absolute; border-radius:50%; background:rgba(255,255,255,0.25); transform:scale(0); animation:rpl 0.5s linear; pointer-events:none; }
+    @keyframes rpl { to{transform:scale(6);opacity:0} }
+    .form-divider { text-align:center; margin:24px 0; position:relative; }
+    .form-divider::before { content:''; position:absolute; left:0; top:50%; width:100%; height:1px; background:var(--rule); }
+    .form-divider span { background:var(--paper); padding:0 16px; position:relative; font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); font-family:var(--display); }
+    .form-link { text-align:center; font-family:var(--serif); font-size:13px; font-style:italic; color:var(--muted); margin-top:16px; }
+    .form-link a { color:var(--ink); text-decoration:underline; cursor:pointer; }
+
+    .success-state { display:none; text-align:center; padding:40px 0; }
+    .success-state.show { display:block; }
+    .success-icon { font-family:var(--display); font-size:64px; margin-bottom:16px; }
+    .success-title { font-family:var(--display); font-size:32px; letter-spacing:-1px; margin-bottom:8px; }
+    .success-sub { font-family:var(--serif); font-size:14px; font-style:italic; color:var(--muted); margin-bottom:32px; }
+
+    .back-link { display:inline-flex; align-items:center; gap:8px; font-family:var(--display); font-size:10px; letter-spacing:4px; color:var(--muted); text-decoration:none; margin-bottom:40px; transition:color 0.2s; animation:fadeUp 0.6s 0.1s both; }
+    .back-link:hover { color:var(--ink); }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+    @media(max-width:768px) { .layout{grid-template-columns:1fr} .left-panel{display:none} .right-panel{padding:40px 28px} }
+  </style>
+</head>
+<body>
+<div class="ticker">
+  <div class="ticker-track">
+    <span>TASKFLOW</span><span class="dot">✦</span><span>SIGN IN TO CONTINUE</span><span class="dot">✦</span>
+    <span>YOUR TASKS AWAIT</span><span class="dot">✦</span><span>MAKE IT COUNT</span><span class="dot">✦</span>
+    <span>TASKFLOW</span><span class="dot">✦</span><span>SIGN IN TO CONTINUE</span><span class="dot">✦</span>
+    <span>YOUR TASKS AWAIT</span><span class="dot">✦</span><span>MAKE IT COUNT</span><span class="dot">✦</span>
+  </div>
+</div>
+<div class="layout">
+  <div class="left-panel">
+    <div class="left-top">
+      <a class="left-logo" href="/">TASKFLOW</a>
+      <div class="left-tag">✦ Welcome Back</div>
+      <div class="left-headline">
+        <span class="lh">GET</span><span class="lh">THINGS</span><span class="lh italic">Done.</span>
+      </div>
+    </div>
+    <div class="left-mid">
+      <p class="left-desc">The luxury-grade to-do experience for people who take their work seriously.</p>
+      <div class="features-list">
+        <div class="feat-item"><div class="feat-dot"></div><div class="feat-text">Unlimited tasks, forever free</div></div>
+        <div class="feat-item"><div class="feat-dot"></div><div class="feat-text">Real PostgreSQL database storage</div></div>
+        <div class="feat-item"><div class="feat-dot"></div><div class="feat-text">Secure bcrypt password hashing</div></div>
+        <div class="feat-item"><div class="feat-dot"></div><div class="feat-text">JWT-based authentication</div></div>
+        <div class="feat-item"><div class="feat-dot"></div><div class="feat-text">Access from any device</div></div>
+      </div>
+    </div>
+    <div class="left-bottom"><div class="left-big-num">TF</div></div>
+  </div>
+
+  <div class="right-panel">
+    <a class="back-link" href="/">← BACK TO HOME</a>
+    <div class="form-header">
+      <div class="form-tag">✦ Account Access</div>
+      <div class="form-title">Welcome to<br><em>Taskflow.</em></div>
+      <div class="form-sub">Sign in or create your free account below.</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('login',this)">SIGN IN</button>
+      <button class="tab-btn" onclick="switchTab('signup',this)">CREATE ACCOUNT</button>
+    </div>
+
+    <div class="form-body">
+      <div class="form-panel active" id="loginPanel">
+        <div class="field">
+          <label class="field-label" for="loginUser">USERNAME</label>
+          <input class="field-input" type="text" id="loginUser" placeholder="Enter your username…"/>
+          <div class="field-error" id="loginUserErr">Please enter your username</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="loginPass">PASSWORD</label>
+          <input class="field-input" type="password" id="loginPass" placeholder="Enter your password…"/>
+          <div class="field-error" id="loginPassErr">Please enter your password</div>
+        </div>
+        <div class="field-error" id="loginErr" style="margin-bottom:12px"></div>
+        <button class="form-submit" id="loginBtn" onclick="handleLogin()">SIGN IN →</button>
+        <div class="form-link">Don't have an account? <a onclick="switchTabByName('signup')">Create one free →</a></div>
+      </div>
+
+      <div class="form-panel" id="signupPanel">
+        <div class="field">
+          <label class="field-label" for="signupName">FULL NAME</label>
+          <input class="field-input" type="text" id="signupName" placeholder="Your name…"/>
+          <div class="field-error" id="signupNameErr">Please enter your name</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="signupUser">USERNAME</label>
+          <input class="field-input" type="text" id="signupUser" placeholder="Choose a username…"/>
+          <div class="field-error" id="signupUserErr">Username is required</div>
+        </div>
+        <div class="field">
+          <label class="field-label" for="signupPass">PASSWORD</label>
+          <input class="field-input" type="password" id="signupPass" placeholder="Min 6 characters…"/>
+          <div class="field-error" id="signupPassErr">Password must be at least 6 characters</div>
+        </div>
+        <div class="field-error" id="signupErr" style="margin-bottom:12px"></div>
+        <button class="form-submit" id="signupBtn" onclick="handleSignup()">CREATE ACCOUNT →</button>
+        <div class="form-link">Already have an account? <a onclick="switchTabByName('login')">Sign in →</a></div>
+      </div>
+    </div>
+
+    <div class="success-state" id="successState">
+      <div class="success-icon">✦</div>
+      <div class="success-title" id="successTitle">Welcome back.</div>
+      <div class="success-sub" id="successSub">Redirecting to your tasks…</div>
+      <div style="width:100%;height:2px;background:var(--rule);margin-top:20px">
+        <div id="loadBar" style="height:100%;background:var(--ink);width:0%;transition:width 1.8s linear"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // If already logged in, go straight to app
+  if (localStorage.getItem('tf_token')) window.location.href = '/app';
+
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById(name + 'Panel').classList.add('active');
+    clearErrors();
+  }
+
+  function switchTabByName(name) {
+    const btn = [...document.querySelectorAll('.tab-btn')].find(b =>
+      name === 'login' ? b.textContent.includes('SIGN') : b.textContent.includes('CREATE')
+    );
+    if (btn) switchTab(name, btn);
+  }
+
+  function clearErrors() {
+    document.querySelectorAll('.field-error').forEach(e => e.classList.remove('show'));
+  }
+
+  function addRipple(btn, e) {
+    const r = document.createElement('span'); r.className = 'ripple';
+    const rc = btn.getBoundingClientRect();
+    r.style.cssText = `width:${rc.width}px;height:${rc.width}px;left:${e.clientX-rc.left-rc.width/2}px;top:${e.clientY-rc.top-rc.width/2}px`;
+    btn.appendChild(r); setTimeout(() => r.remove(), 600);
+  }
+
+  ['loginBtn','signupBtn'].forEach(id => {
+    const btn = document.getElementById(id);
+    btn.addEventListener('click', e => addRipple(btn, e));
+  });
+
+  function showSuccess(title, sub) {
+    document.querySelector('.form-header').style.display = 'none';
+    document.querySelector('.tabs').style.display = 'none';
+    document.querySelector('.form-body').style.display = 'none';
+    const ss = document.getElementById('successState');
+    document.getElementById('successTitle').textContent = title;
+    document.getElementById('successSub').textContent = sub;
+    ss.classList.add('show');
+    setTimeout(() => document.getElementById('loadBar').style.width = '100%', 50);
+    setTimeout(() => window.location.href = '/app', 2000);
+  }
+
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.textContent = loading ? 'PLEASE WAIT…' : (btnId === 'loginBtn' ? 'SIGN IN →' : 'CREATE ACCOUNT →');
+  }
+
+  async function handleLogin() {
+    clearErrors();
+    const username = document.getElementById('loginUser').value.trim();
+    const password = document.getElementById('loginPass').value.trim();
+    let ok = true;
+    if (!username) { document.getElementById('loginUserErr').classList.add('show'); ok = false; }
+    if (!password) { document.getElementById('loginPassErr').classList.add('show'); ok = false; }
+    if (!ok) return;
+
+    setLoading('loginBtn', true);
+    try {
+      const res  = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const err = document.getElementById('loginErr');
+        err.textContent = data.error; err.classList.add('show');
+        document.getElementById('loginUser').style.animation = 'shake 0.3s ease';
+        setTimeout(() => document.getElementById('loginUser').style.animation = '', 350);
+        return;
+      }
+      localStorage.setItem('tf_token', data.token);
+      localStorage.setItem('tf_current', JSON.stringify(data.user));
+      showSuccess(`Welcome back, ${data.user.name}.`, 'Loading your tasks…');
+    } catch {
+      const err = document.getElementById('loginErr');
+      err.textContent = 'Connection error. Please try again.'; err.classList.add('show');
+    } finally { setLoading('loginBtn', false); }
+  }
+
+  async function handleSignup() {
+    clearErrors();
+    const name     = document.getElementById('signupName').value.trim();
+    const username = document.getElementById('signupUser').value.trim();
+    const password = document.getElementById('signupPass').value.trim();
+    let ok = true;
+    if (!name)           { document.getElementById('signupNameErr').classList.add('show'); ok = false; }
+    if (!username)       { document.getElementById('signupUserErr').classList.add('show'); ok = false; }
+    if (password.length < 6) { document.getElementById('signupPassErr').classList.add('show'); ok = false; }
+    if (!ok) return;
+
+    setLoading('signupBtn', true);
+    try {
+      const res  = await fetch('/api/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, username, password })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const err = document.getElementById('signupErr');
+        err.textContent = data.error; err.classList.add('show');
+        return;
+      }
+      localStorage.setItem('tf_token', data.token);
+      localStorage.setItem('tf_current', JSON.stringify(data.user));
+      showSuccess(`Welcome, ${data.user.name}.`, 'Account created. Loading tasks…');
+    } catch {
+      const err = document.getElementById('signupErr');
+      err.textContent = 'Connection error. Please try again.'; err.classList.add('show');
+    } finally { setLoading('signupBtn', false); }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter') return;
+    const loginActive = document.getElementById('loginPanel').classList.contains('active');
+    if (loginActive) handleLogin(); else handleSignup();
+  });
+</script>
+</body>
+</html>
