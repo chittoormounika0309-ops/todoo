@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Taskflow — Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,700;1,400&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{--ink:#080808;--paper:#f5f3ee;--cream:#ede9e0;--rule:#d8d4c8;--muted:#a09a8e;--serif:'Playfair Display',Georgia,serif;--display:'Bebas Neue',sans-serif;--sans:'Inter',sans-serif;}
+    body{font-family:var(--sans);background:var(--paper);color:var(--ink);min-height:100vh;}
+
+    .ticker{background:var(--ink);color:var(--paper);overflow:hidden;white-space:nowrap;padding:10px 0;}
+    .ticker-track{display:inline-block;animation:ticker 22s linear infinite;}
+    .ticker-track span{font-family:var(--display);font-size:12px;letter-spacing:4px;margin-right:60px;}
+    .ticker-track .dot{color:var(--muted);}
+    @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+    .app-nav{display:flex;align-items:center;justify-content:space-between;padding:16px 60px;border-bottom:1px solid var(--rule);background:var(--paper);}
+    .nav-logo{font-family:var(--display);font-size:18px;letter-spacing:3px;text-decoration:none;color:var(--ink);}
+    .nav-right{display:flex;align-items:center;gap:16px;}
+    .nav-btn{font-family:var(--display);font-size:10px;letter-spacing:3px;background:transparent;border:1px solid var(--rule);color:var(--muted);padding:8px 16px;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
+    .nav-btn:hover{border-color:var(--ink);color:var(--ink);}
+    .nav-btn.active{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+    .page{max-width:900px;margin:0 auto;padding:56px 52px 80px;}
+
+    /* Header */
+    .profile-header{display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:center;border-bottom:3px solid var(--ink);padding-bottom:48px;margin-bottom:48px;animation:fadeUp 0.6s both;}
+
+    /* Avatar */
+    .avatar-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;}
+    .avatar{width:120px;height:120px;border-radius:0;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:52px;color:#fff;letter-spacing:-2px;flex-shrink:0;cursor:pointer;transition:transform 0.2s;position:relative;}
+    .avatar:hover{transform:scale(1.04);}
+    .avatar-hint{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+    .color-swatches{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:140px;}
+    .swatch{width:22px;height:22px;cursor:pointer;transition:transform 0.15s;border:2px solid transparent;}
+    .swatch:hover{transform:scale(1.2);}
+    .swatch.selected{border-color:var(--ink);}
+
+    /* Profile info */
+    .profile-info{}
+    .profile-tag{font-family:var(--display);font-size:11px;letter-spacing:5px;color:var(--muted);margin-bottom:8px;}
+    .profile-name{font-family:var(--display);font-size:clamp(40px,6vw,72px);letter-spacing:-2px;line-height:0.9;margin-bottom:8px;}
+    .profile-username{font-family:var(--serif);font-size:14px;font-style:italic;color:var(--muted);margin-bottom:20px;}
+    .profile-bio{font-family:var(--serif);font-size:16px;font-style:italic;color:var(--muted);line-height:1.7;min-height:24px;}
+
+    /* Stats row */
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--rule);margin-bottom:48px;animation:fadeUp 0.6s 0.1s both;}
+    .stat-box{padding:24px 28px;border-right:1px solid var(--rule);transition:background 0.2s;}
+    .stat-box:last-child{border-right:none;}
+    .stat-box:hover{background:var(--cream);}
+    .stat-n{font-family:var(--display);font-size:48px;line-height:1;letter-spacing:-1px;}
+    .stat-l{font-size:9px;font-weight:500;letter-spacing:4px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+
+    /* Sections */
+    .section{margin-bottom:48px;animation:fadeUp 0.6s 0.2s both;}
+    .section-title{font-family:var(--display);font-size:24px;letter-spacing:-0.5px;margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--rule);}
+
+    /* Form fields */
+    .field{margin-bottom:24px;}
+    .field-label{font-family:var(--display);font-size:10px;letter-spacing:4px;color:var(--muted);margin-bottom:8px;display:block;}
+    .field-input{width:100%;border:none;border-bottom:1.5px solid var(--rule);background:transparent;color:var(--ink);font-family:var(--serif);font-size:17px;font-style:italic;padding:10px 0;outline:none;transition:border-color 0.2s;}
+    .field-input:focus{border-color:var(--ink);}
+    .field-input::placeholder{color:var(--rule);}
+    textarea.field-input{resize:none;height:80px;font-size:15px;}
+    .field-error{font-size:10px;color:#c0392b;letter-spacing:1px;margin-top:6px;display:none;font-weight:500;text-transform:uppercase;}
+    .field-error.show{display:block;}
+
+    /* Buttons */
+    .btn-row{display:flex;gap:12px;margin-top:8px;}
+    .btn-ink{font-family:var(--display);font-size:11px;letter-spacing:4px;background:var(--ink);color:var(--paper);border:none;padding:14px 28px;cursor:pointer;transition:opacity 0.2s,transform 0.15s;}
+    .btn-ink:hover{opacity:0.8;transform:translateY(-1px);}
+    .btn-ink:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
+    .btn-outline{font-family:var(--display);font-size:11px;letter-spacing:4px;background:transparent;color:var(--ink);border:1.5px solid var(--rule);padding:12px 28px;cursor:pointer;transition:all 0.2s;text-decoration:none;display:inline-block;}
+    .btn-outline:hover{border-color:var(--ink);}
+
+    /* Success/error banners */
+    .banner{display:none;padding:12px 20px;margin-bottom:20px;font-family:var(--display);font-size:11px;letter-spacing:3px;}
+    .banner.success{background:var(--ink);color:var(--paper);}
+    .banner.error{border:1px solid #c0392b;color:#c0392b;}
+    .banner.show{display:block;}
+
+    /* Joined date */
+    .joined{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:12px;}
+
+    /* Danger zone */
+    .danger-zone{border:1px solid #e0d0d0;padding:24px;margin-top:48px;}
+    .danger-title{font-family:var(--display);font-size:16px;letter-spacing:2px;color:#c0392b;margin-bottom:8px;}
+    .danger-desc{font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6;}
+    .btn-danger{font-family:var(--display);font-size:11px;letter-spacing:4px;background:transparent;color:#c0392b;border:1.5px solid #e0d0d0;padding:10px 24px;cursor:pointer;transition:all 0.2s;}
+    .btn-danger:hover{border-color:#c0392b;background:#fef2f2;}
+
+    .toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:var(--paper);font-family:var(--display);font-size:11px;letter-spacing:5px;padding:14px 28px;opacity:0;transition:transform 0.4s cubic-bezier(0.16,1,0.3,1),opacity 0.4s;pointer-events:none;z-index:1000;white-space:nowrap;}
+    .toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-width:768px){
+      .app-nav{padding:16px 24px;} .page{padding:32px 24px 60px;}
+      .profile-header{grid-template-columns:1fr;gap:24px;}
+      .stats-row{grid-template-columns:1fr 1fr;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="ticker">
+  <div class="ticker-track">
+    <span>TASKFLOW</span><span class="dot">✦</span><span>YOUR PROFILE</span><span class="dot">✦</span>
+    <span>MAKE IT COUNT</span><span class="dot">✦</span><span>TASKFLOW</span><span class="dot">✦</span>
+    <span>YOUR PROFILE</span><span class="dot">✦</span><span>MAKE IT COUNT</span><span class="dot">✦</span>
+  </div>
+</div>
+
+<nav class="app-nav">
+  <a class="nav-logo" href="/">TASKFLOW</a>
+  <div class="nav-right">
+    <a class="nav-btn" href="/app">MY TASKS</a>
+    <a class="nav-btn active" href="/profile">PROFILE</a>
+    <button class="nav-btn" onclick="logout()">SIGN OUT</button>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- Profile header -->
+  <div class="profile-header">
+    <div class="avatar-wrap">
+      <div class="avatar" id="avatar" title="Click a color below to change"></div>
+      <div class="avatar-hint">Pick avatar color</div>
+      <div class="color-swatches" id="swatches"></div>
+    </div>
+    <div class="profile-info">
+      <div class="profile-tag">✦ Your Account</div>
+      <div class="profile-name" id="displayName">Loading…</div>
+      <div class="profile-username" id="displayUsername"></div>
+      <div class="profile-bio" id="displayBio"></div>
+      <div class="joined" id="displayJoined"></div>
+    </div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-box"><div class="stat-n" id="totalTasks">0</div><div class="stat-l">Total tasks</div></div>
+    <div class="stat-box"><div class="stat-n" id="doneTasks">0</div><div class="stat-l">Completed</div></div>
+    <div class="stat-box"><div class="stat-n" id="pendingTasks">0</div><div class="stat-l">Remaining</div></div>
+  </div>
+
+  <!-- Edit profile -->
+  <div class="section">
+    <div class="section-title">Edit Profile</div>
+    <div class="banner" id="profileBanner"></div>
+    <div class="field">
+      <label class="field-label" for="editName">DISPLAY NAME</label>
+      <input class="field-input" type="text" id="editName" placeholder="Your full name…"/>
+    </div>
+    <div class="field">
+      <label class="field-label" for="editBio">BIO</label>
+      <textarea class="field-input" id="editBio" placeholder="A short line about you…"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-ink" id="saveProfileBtn" onclick="saveProfile()">SAVE CHANGES</button>
+    </div>
+  </div>
+
+  <!-- Change password -->
+  <div class="section">
+    <div class="section-title">Change Password</div>
+    <div class="banner" id="passBanner"></div>
+    <div class="field">
+      <label class="field-label" for="curPass">CURRENT PASSWORD</label>
+      <input class="field-input" type="password" id="curPass" placeholder="Enter current password…"/>
+      <div class="field-error" id="curPassErr">Current password is required</div>
+    </div>
+    <div class="field">
+      <label class="field-label" for="newPass">NEW PASSWORD</label>
+      <input class="field-input" type="password" id="newPass" placeholder="Min 6 characters…"/>
+      <div class="field-error" id="newPassErr">New password must be at least 6 characters</div>
+    </div>
+    <div class="field">
+      <label class="field-label" for="confPass">CONFIRM NEW PASSWORD</label>
+      <input class="field-input" type="password" id="confPass" placeholder="Repeat new password…"/>
+      <div class="field-error" id="confPassErr">Passwords do not match</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-ink" id="savePassBtn" onclick="savePassword()">UPDATE PASSWORD</button>
+    </div>
+  </div>
+
+  <!-- Danger zone -->
+  <div class="danger-zone">
+    <div class="danger-title">SIGN OUT EVERYWHERE</div>
+    <div class="danger-desc">This will sign you out of the current session. Your tasks and data are safely stored in the database.</div>
+    <button class="btn-danger" onclick="logout()">SIGN OUT</button>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const token   = localStorage.getItem('tf_token');
+  const current = JSON.parse(localStorage.getItem('tf_current') || 'null');
+  if (!token || !current) window.location.href = '/login';
+
+  const AUTH = { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` };
+
+  function logout() { localStorage.removeItem('tf_token'); localStorage.removeItem('tf_current'); window.location.href = '/login'; }
+
+  let tt;
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg; el.classList.add('show');
+    clearTimeout(tt); tt = setTimeout(() => el.classList.remove('show'), 2400);
+  }
+
+  const PALETTE = ["#2C3E50","#8E44AD","#2980B9","#16A085","#D35400","#C0392B","#1A252F","#6C3483","#795548","#37474F"];
+  let selectedColor = current?.avatar_color || '#2C3E50';
+
+  function initSwatches() {
+    const wrap = document.getElementById('swatches');
+    PALETTE.forEach(c => {
+      const s = document.createElement('div');
+      s.className = 'swatch' + (c === selectedColor ? ' selected' : '');
+      s.style.background = c;
+      s.title = c;
+      s.onclick = () => {
+        selectedColor = c;
+        document.querySelectorAll('.swatch').forEach(sw => sw.classList.remove('selected'));
+        s.classList.add('selected');
+        document.getElementById('avatar').style.background = c;
+      };
+      wrap.appendChild(s);
+    });
+  }
+
+  function initials(name) {
+    return name.split(' ').map(w => w[0]).join('').substring(0,2).toUpperCase();
+  }
+
+  function setProfile(user) {
+    document.getElementById('displayName').textContent    = user.name;
+    document.getElementById('displayUsername').textContent = '@' + user.username;
+    document.getElementById('displayBio').textContent     = user.bio || 'No bio yet — add one below.';
+    document.getElementById('editName').value = user.name;
+    document.getElementById('editBio').value  = user.bio || '';
+    const av = document.getElementById('avatar');
+    av.textContent = initials(user.name);
+    av.style.background = user.avatar_color || '#2C3E50';
+    selectedColor = user.avatar_color || '#2C3E50';
+    document.querySelectorAll('.swatch').forEach(s => {
+      s.classList.toggle('selected', s.style.background === selectedColor ||
+        s.title === selectedColor);
+    });
+    if (user.created_at) {
+      const d = new Date(user.created_at);
+      document.getElementById('displayJoined').textContent =
+        '✦ Member since ' + d.toLocaleDateString('en-US', { month:'long', year:'numeric' });
+    }
+    document.getElementById('totalTasks').textContent   = user.total_tasks   || 0;
+    document.getElementById('doneTasks').textContent    = user.done_tasks     || 0;
+    document.getElementById('pendingTasks').textContent = (user.total_tasks - user.done_tasks) || 0;
+  }
+
+  async function loadProfile() {
+    try {
+      const res  = await fetch('/api/profile', { headers: AUTH });
+      if (res.status === 401) { logout(); return; }
+      const user = await res.json();
+      setProfile(user);
+    } catch { toast('FAILED TO LOAD PROFILE'); }
+  }
+
+  async function saveProfile() {
+    const name  = document.getElementById('editName').value.trim();
+    const bio   = document.getElementById('editBio').value.trim();
+    const btn   = document.getElementById('saveProfileBtn');
+    const banner = document.getElementById('profileBanner');
+    banner.className = 'banner'; banner.style.display = 'none';
+    if (!name) { banner.textContent = 'NAME IS REQUIRED'; banner.className = 'banner error show'; return; }
+    btn.disabled = true; btn.textContent = 'SAVING…';
+    try {
+      const res  = await fetch('/api/profile', {
+        method: 'PATCH', headers: AUTH,
+        body: JSON.stringify({ name, bio, avatar_color: selectedColor })
+      });
+      const user = await res.json();
+      if (!res.ok) { banner.textContent = user.error.toUpperCase(); banner.className = 'banner error show'; return; }
+      const updated = { ...current, ...user };
+      localStorage.setItem('tf_current', JSON.stringify(updated));
+      setProfile(user);
+      banner.textContent = 'PROFILE UPDATED SUCCESSFULLY'; banner.className = 'banner success show';
+      toast('PROFILE SAVED');
+    } catch { toast('SAVE FAILED'); }
+    finally { btn.disabled = false; btn.textContent = 'SAVE CHANGES'; }
+  }
+
+  async function savePassword() {
+    const cur  = document.getElementById('curPass').value.trim();
+    const nw   = document.getElementById('newPass').value.trim();
+    const conf = document.getElementById('confPass').value.trim();
+    const btn  = document.getElementById('savePassBtn');
+    const banner = document.getElementById('passBanner');
+    document.querySelectorAll('.field-error').forEach(e => e.classList.remove('show'));
+    banner.className = 'banner'; banner.style.display = 'none';
+    let ok = true;
+    if (!cur)        { document.getElementById('curPassErr').classList.add('show'); ok = false; }
+    if (nw.length<6) { document.getElementById('newPassErr').classList.add('show'); ok = false; }
+    if (nw !== conf) { document.getElementById('confPassErr').classList.add('show'); ok = false; }
+    if (!ok) return;
+    btn.disabled = true; btn.textContent = 'UPDATING…';
+    try {
+      const res  = await fetch('/api/profile/password', {
+        method: 'PATCH', headers: AUTH,
+        body: JSON.stringify({ current_password: cur, new_password: nw })
+      });
+      const data = await res.json();
+      if (!res.ok) { banner.textContent = data.error.toUpperCase(); banner.className = 'banner error show'; return; }
+      document.getElementById('curPass').value = '';
+      document.getElementById('newPass').value  = '';
+      document.getElementById('confPass').value = '';
+      banner.textContent = 'PASSWORD UPDATED SUCCESSFULLY'; banner.className = 'banner success show';
+      toast('PASSWORD CHANGED');
+    } catch { toast('UPDATE FAILED'); }
+    finally { btn.disabled = false; btn.textContent = 'UPDATE PASSWORD'; }
+  }
+
+  initSwatches();
+  loadProfile();
+</script>
+</body>
+</html>
